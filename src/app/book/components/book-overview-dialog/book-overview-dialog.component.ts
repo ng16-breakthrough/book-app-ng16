@@ -1,12 +1,11 @@
-import {Component, computed, effect, Signal, signal} from '@angular/core';
+import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BookService} from '../../services/book.service';
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {catchError, delay, distinctUntilChanged, map, merge, Observable, of, switchMap, tap, throwError} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
+import {catchError, delay, distinctUntilChanged, map, Observable, switchMap, tap, throwError} from 'rxjs';
 import {BookSearchComponent} from '../book-search/book-search.component';
 import {Book} from '../../model';
 import {BookListComponent} from '../book-list/book-list.component';
-import {toSignal} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ba-book-overview-dialog',

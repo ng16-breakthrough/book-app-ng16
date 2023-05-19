@@ -93,21 +93,5 @@ describe('BookListComponent', () => {
 
       return matchingRowElement;
     }
-
-    function setInputValue(inputElement: HTMLInputElement, newValue: string) {
-      inputElement.value = newValue;
-      inputElement.dispatchEvent(new Event('input'));
-    }
-
-    function getElement<E extends Element = Element>(selector: string): E {
-      if (!element) {
-        throw new Error('Element not provided!');
-      }
-      const foundElement = element.querySelector<E>(selector);
-      if (!foundElement) {
-        throw new Error(`No element found using selector: ${selector}`);
-      }
-      return foundElement;
-    }
   }
 });
