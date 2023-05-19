@@ -4,7 +4,7 @@ import {Routes} from '@angular/router';
 
 const bookIdParamName = 'bookId';
 
-export const bookDetailsRoutes: Routes =[
+export const bookDetailsDialogRoutes: Routes =[
   {
     path: 'new',
     component: BookDetailsDialogComponent

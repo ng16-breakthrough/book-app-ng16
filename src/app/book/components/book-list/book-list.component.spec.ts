@@ -27,7 +27,8 @@ describe('BookListComponent', () => {
     // then
     createBookListComponentObjectFrom(element)
       .expect()
-      .hasBookListElementWithId(book.id);
+      .toHaveBookListElementCount(1)
+      .toHaveBookListElementWithId(book.id);
   });
 
   it('notifies on click on a book list element', (done) => {
@@ -44,54 +45,61 @@ describe('BookListComponent', () => {
       .do()
       .clickOnBookListElementWithId(book.id);
   });
+});
 
-  function createBookListComponentObjectFrom(element: HTMLElement) {
-    return {
-      do() {
-        return {
-          clickOnBookListElementWithId(bookId: number) {
-            const listElement = getTableRowElementContainingTextInFirstColumn(`${bookId}`);
-            if (!listElement) {
-              throw new Error(`No list element of book with ID ${bookId}`);
-            }
-            listElement.click();
-            return this;
+export function createBookListComponentObjectFrom(element: HTMLElement | null) {
+  return {
+    do() {
+      return {
+        clickOnBookListElementWithId(bookId: number) {
+          const listElement = getTableRowElementContainingTextInFirstColumn(`${bookId}`);
+          if (!listElement) {
+            throw new Error(`No list element of book with ID ${bookId}`);
           }
-        }
-      },
-
-      expect() {
-        return {
-          hasBookListElementWithId(bookId: number) {
-            expect(getTableRowElementContainingTextInFirstColumn(`${bookId}`))
-              .withContext(`No list element of book with ID ${bookId}`)
-              .toBeTruthy();
-            return this;
-          }
+          listElement.click();
+          return this;
         }
       }
-    }
+    },
 
-    function getTableRowElementContainingTextInFirstColumn(expectedText: string) {
-      if (!element) {
-        throw new Error('Element not provided!');
-      }
+    expect() {
+      return {
+        toHaveBookListElementWithId(bookId: number) {
+          expect(getTableRowElementContainingTextInFirstColumn(`${bookId}`))
+            .withContext(`No list element of book with ID ${bookId}`)
+            .toBeTruthy();
+          return this;
+        },
 
-      const rowElements = element.querySelectorAll<HTMLTableRowElement>('table > tbody > tr');
-      let matchingRowElement = null;
-      for (let i = 0; i < rowElements.length; i++) {
-        const rowElement = rowElements.item(i);
-        const tableCells = rowElement.querySelectorAll<HTMLTableCellElement>('td');
-        if (tableCells.length > 0) {
-          const firstColumnCell = tableCells.item(0);
-          if (firstColumnCell.textContent === expectedText) {
-            matchingRowElement = rowElement;
-            break;
-          }
+        toHaveBookListElementCount(noOfListElements: number) {
+          expect(getTableRowElements().length).toBe(noOfListElements);
+          return this;
         }
       }
-
-      return matchingRowElement;
     }
   }
-});
+
+  function getTableRowElementContainingTextInFirstColumn(expectedText: string) {
+    const rowElements = getTableRowElements();
+    let matchingRowElement = null;
+    for (let i = 0; i < rowElements.length; i++) {
+      const rowElement = rowElements.item(i);
+      const tableCells = rowElement.querySelectorAll<HTMLTableCellElement>('td');
+      if (tableCells.length > 0) {
+        const firstColumnCell = tableCells.item(0);
+        if (firstColumnCell.textContent === expectedText) {
+          matchingRowElement = rowElement;
+          break;
+        }
+      }
+    }
+
+    return matchingRowElement;
+  }
+  function getTableRowElements() {
+    if (!element) {
+      throw new Error('Element not provided!');
+    }
+    return element.querySelectorAll<HTMLTableRowElement>('table > tbody > tr');
+  }
+}

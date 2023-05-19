@@ -44,52 +44,52 @@ describe('BookSearchComponent', () => {
       .setQueryInputTo(searchQuery)
       .clickOnSearchButton()
   });
+});
 
-  function createBookSearchComponentObjectFrom(element: HTMLElement) {
-    return {
-      do() {
-        return {
-          setQueryInputTo(newValue: string) {
-            setInputValue(getQueryInputElement(), newValue);
-            return this;
-          },
+export function createBookSearchComponentObjectFrom(element: HTMLElement | null) {
+  return {
+    do() {
+      return {
+        setQueryInputTo(newValue: string) {
+          setInputValue(getQueryInputElement(), newValue);
+          return this;
+        },
 
-          clickOnSearchButton() {
-            const searchButton = getElement<HTMLButtonElement>('button');
-            searchButton.click();
-            return this;
-          }
-        }
-      },
-
-      expect() {
-        return {
-          queryInputToBe(expectedInput: string) {
-            expect(getQueryInputElement().value).toBe(expectedInput);
-            return this;
-          }
+        clickOnSearchButton() {
+          const searchButton = getElement<HTMLButtonElement>('button');
+          searchButton.click();
+          return this;
         }
       }
-    }
+    },
 
-    function getQueryInputElement() {
-      return getElement<HTMLInputElement>('#searchQuery');
-    }
-
-    function setInputValue(inputElement: HTMLInputElement, newValue: string) {
-      inputElement.value = newValue;
-      inputElement.dispatchEvent(new Event('input'));
-    }
-
-    function getElement<E extends Element = Element>(selector: string): E {
-      if(!element) {
-        throw new Error('Element not provided!');
+    expect() {
+      return {
+        queryInputToBe(expectedInput: string) {
+          expect(getQueryInputElement().value).toBe(expectedInput);
+          return this;
+        }
       }
-      const foundElement = element.querySelector<E>(selector);
-      if (!foundElement) {
-        throw new Error(`No element found using selector: ${selector}`);
-      }
-      return foundElement;
     }
   }
-});
+
+  function getQueryInputElement() {
+    return getElement<HTMLInputElement>('#searchQuery');
+  }
+
+  function setInputValue(inputElement: HTMLInputElement, newValue: string) {
+    inputElement.value = newValue;
+    inputElement.dispatchEvent(new Event('input'));
+  }
+
+  function getElement<E extends Element = Element>(selector: string): E {
+    if(!element) {
+      throw new Error('Element not provided!');
+    }
+    const foundElement = element.querySelector<E>(selector);
+    if (!foundElement) {
+      throw new Error(`No element found using selector: ${selector}`);
+    }
+    return foundElement;
+  }
+}

@@ -7,7 +7,7 @@ import {createBookFormComponentObjectFrom} from '../book-form/book-form.componen
 import {BookService} from '../../services/book.service';
 import {Book, BookProperties} from '../../model';
 import {firstValueFrom} from 'rxjs';
-import {bookDetailsRoutes} from './book-details.routes';
+import {bookDetailsDialogRoutes} from './book-details-dialog.routes';
 
 describe('BookDetailsDialogComponent', () => {
   const author = 'Test Author';
@@ -22,7 +22,7 @@ describe('BookDetailsDialogComponent', () => {
     return TestBed.configureTestingModule({
       providers: [
         provideBooks(),
-        provideRouter(bookDetailsRoutes)
+        provideRouter(bookDetailsDialogRoutes)
       ],
       imports: [BookDetailsDialogComponent]
     }).compileComponents()
