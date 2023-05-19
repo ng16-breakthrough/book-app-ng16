@@ -1,0 +1,13 @@
+<div class="d-flex align-items-center mb-4">
+  <ba-book-search
+    [query]="searchQuery$ | async"
+    (queryChange)="updateQueryUrlParamWith($event)"
+  ></ba-book-search>
+  <div *ngIf="isLoading" class="ms-2 spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<ba-book-list
+  [books]="searchResults$ | async"
+  (bookClick)="navigateToDetailsOf($event)"
+></ba-book-list>

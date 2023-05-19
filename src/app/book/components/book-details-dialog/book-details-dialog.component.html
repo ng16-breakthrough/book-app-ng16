@@ -1,0 +1,4 @@
+<h4 class="mb-4"><a routerLink=".."
+                    class="link-primary">&lt;</a>&nbsp;&nbsp;<span>{{book ? 'Details of Book #' + book.id : 'New Book'}}</span>
+</h4>
+<ba-book-form [book]="book" (saveClick)="saveOrUpdateBookAndGoBackToOverview($event)"/>

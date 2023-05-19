@@ -1,0 +1,7 @@
+<form role="search" (ngSubmit)="notifyOnNewSearchQuery($event)" class="d-flex">
+  <input id="searchQuery"
+         class="form-control form-control-lg"
+         placeholder="Type your query here..."
+         aria-label="search query" [value]="query">
+  <button class="btn btn-primary ms-1">Search</button>
+</form>

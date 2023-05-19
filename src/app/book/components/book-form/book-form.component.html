@@ -1,0 +1,12 @@
+<form (ngSubmit)="notifyOnSaveClickIfFormValid()"
+      [formGroup]="bookForm">
+  <div class="mb-3">
+    <label for="author" class="form-label">Author:</label>
+    <input id="author" class="form-control" formControlName="author">
+  </div>
+  <div class="mb-3">
+    <label for="title" class="form-label">Title:</label>
+    <input id="title" class="form-control" formControlName="title">
+  </div>
+  <button class="btn btn-primary">Save</button>
+</form>

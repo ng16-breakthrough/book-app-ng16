@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+a {
+  &:link {
+    text-decoration: none;
+  }
+}
