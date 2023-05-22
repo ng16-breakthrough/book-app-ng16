@@ -1,11 +1,13 @@
 import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BookService} from '../../services/book.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {catchError, delay, distinctUntilChanged, map, Observable, switchMap, tap, throwError} from 'rxjs';
 import {BookSearchComponent} from '../book-search/book-search.component';
 import {Book} from '../../model';
 import {BookListComponent} from '../book-list/book-list.component';
+
+export const queryUrlParameterName = 'query';
 
 @Component({
   selector: 'ba-book-overview-dialog',
@@ -25,16 +27,12 @@ export class BookOverviewDialogComponent {
     private readonly books: BookService) {
 
     this.searchQuery$ = this.currentRoute.params.pipe(
-      map(params => params['query'] ?? ''),
+      map(getSearchQueryFromUrlParameters),
       distinctUntilChanged()
     );
 
     this.searchResults$ = this.searchQuery$.pipe(
-      switchMap(searchQuery => this.books.search(searchQuery))
-    );
-
-    this.searchResults$ = this.searchQuery$.pipe(
-      delay(0),
+      delay(0), // to fix ExpressionChangedAfterItHasBeenCheckedError
       tap(() => this.isLoading = true),
       switchMap(searchQuery => this.books.search(searchQuery)),
       catchError(error => {
@@ -46,10 +44,16 @@ export class BookOverviewDialogComponent {
   }
 
   updateQueryUrlParamWith(newSearchQuery: string) {
-    this.router.navigate([{query: newSearchQuery}], {relativeTo: this.currentRoute});
+    const newParams: Params = {};
+    newParams[queryUrlParameterName] = newSearchQuery;
+    this.router.navigate([newParams], {relativeTo: this.currentRoute});
   }
 
   navigateToDetailsOf(book: Book) {
     this.router.navigate([book.id],  {relativeTo: this.currentRoute});
   }
+}
+
+function getSearchQueryFromUrlParameters(params: Params): string {
+  return params[queryUrlParameterName] ?? ''
 }
