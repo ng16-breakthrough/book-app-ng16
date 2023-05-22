@@ -1,10 +1,10 @@
-import {Component, Input, OnDestroy} from '@angular/core';
+import {Component, DestroyRef, Input} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Book, BookProperties} from '../../model';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {BookFormComponent} from '../book-form/book-form.component';
 import {BookService} from '../../services/book.service';
-import {Subject, takeUntil} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ba-book-details-dialog',
@@ -13,15 +13,14 @@ import {Subject, takeUntil} from 'rxjs';
   templateUrl: './book-details-dialog.component.html',
   styleUrls: ['./book-details-dialog.component.scss']
 })
-export class BookDetailsDialogComponent implements OnDestroy {
+export class BookDetailsDialogComponent {
   @Input()
   book: Book | undefined;
 
-  private readonly unsubscribe$ = new Subject<void>();
-
   constructor(private readonly currentRoute: ActivatedRoute,
               private readonly books: BookService,
-              private readonly router: Router) {
+              private readonly router: Router,
+              private readonly destroyRef: DestroyRef) {
   }
 
   saveOrUpdateBookAndGoBackToOverview(book: BookProperties) {
@@ -29,12 +28,7 @@ export class BookDetailsDialogComponent implements OnDestroy {
       this.books.update({...this.book, ...book}) : this.books.save(book);
 
     saveOrUpdate.pipe(
-      takeUntil(this.unsubscribe$)
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.router.navigate(['..'], {relativeTo: this.currentRoute}));
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 }
