@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {provideBooks} from '../../book.config';
 import {BookDetailsDialogComponent} from './book-details-dialog.component';
-import {provideRouter, Router} from '@angular/router';
+import {provideRouter, Router, withComponentInputBinding} from '@angular/router';
 import {RouterTestingHarness} from '@angular/router/testing';
 import {createBookFormComponentObjectFrom} from '../book-form/book-form.component.spec';
 import {BookService} from '../../services/book.service';
@@ -22,7 +22,7 @@ describe('BookDetailsDialogComponent', () => {
     return TestBed.configureTestingModule({
       providers: [
         provideBooks(),
-        provideRouter(bookDetailsDialogRoutes)
+        provideRouter(bookDetailsDialogRoutes, withComponentInputBinding())
       ],
       imports: [BookDetailsDialogComponent]
     }).compileComponents()

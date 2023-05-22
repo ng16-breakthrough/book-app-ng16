@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
+import {Component, Input, OnDestroy} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Book, BookProperties} from '../../model';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
@@ -14,6 +14,7 @@ import {Subject, takeUntil} from 'rxjs';
   styleUrls: ['./book-details-dialog.component.scss']
 })
 export class BookDetailsDialogComponent implements OnDestroy {
+  @Input()
   book: Book | undefined;
 
   private readonly unsubscribe$ = new Subject<void>();
@@ -21,7 +22,6 @@ export class BookDetailsDialogComponent implements OnDestroy {
   constructor(private readonly currentRoute: ActivatedRoute,
               private readonly books: BookService,
               private readonly router: Router) {
-    this.book = currentRoute.snapshot.data['book'] as (Book | undefined);
   }
 
   saveOrUpdateBookAndGoBackToOverview(book: BookProperties) {

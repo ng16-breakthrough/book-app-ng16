@@ -1,12 +1,12 @@
 import {ApplicationConfig} from '@angular/core';
-import {provideRouter} from '@angular/router';
+import {provideRouter, withComponentInputBinding} from '@angular/router';
 
 import {routes} from './app.routes';
 import {provideBooks} from './book/book.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideBooks([
       {author: 'Douglas Crockford', title: 'JavaScript. The Good Parts'},
       {author: 'Tom Hombergs', title: 'Get Your Hands Dirty On Clean Architecture'},
