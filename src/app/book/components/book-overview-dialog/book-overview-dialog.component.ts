@@ -1,11 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, effect, Signal, signal, WritableSignal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BookService} from '../../services/book.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {catchError, delay, distinctUntilChanged, map, Observable, switchMap, tap, throwError} from 'rxjs';
+import {distinctUntilChanged, map, Observer} from 'rxjs';
 import {BookSearchComponent} from '../book-search/book-search.component';
 import {Book} from '../../model';
 import {BookListComponent} from '../book-list/book-list.component';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 export const queryUrlParameterName = 'query';
 
@@ -17,30 +18,28 @@ export const queryUrlParameterName = 'query';
   styleUrls: ['./book-overview-dialog.component.scss']
 })
 export class BookOverviewDialogComponent {
-  readonly searchQuery$: Observable<string>;
-  readonly searchResults$: Observable<Book[]>;
-  isLoading = false;
+  readonly searchQuery: Signal<string>;
+  readonly searchResults = signal<Book[]>([]);
+  readonly isLoading = signal(false);
 
   constructor(
     private readonly currentRoute: ActivatedRoute,
     private readonly router: Router,
     private readonly books: BookService) {
 
-    this.searchQuery$ = this.currentRoute.params.pipe(
-      map(getSearchQueryFromUrlParameters),
-      distinctUntilChanged()
-    );
+    this.searchQuery = toSignal(
+      this.currentRoute.params.pipe(
+        map(getSearchQueryFromUrlParameters),
+        distinctUntilChanged()
+      ), {initialValue: ''});
 
-    this.searchResults$ = this.searchQuery$.pipe(
-      delay(0), // to fix ExpressionChangedAfterItHasBeenCheckedError
-      tap(() => this.isLoading = true),
-      switchMap(searchQuery => this.books.search(searchQuery)),
-      catchError(error => {
-        this.isLoading = false;
-        return throwError(error);
-      }),
-      tap(() => this.isLoading = false),
-    );
+    effect(onCleanup => {
+      this.isLoading.set(true);
+      const query = this.searchQuery();
+      const subscription = this.books.search(query)
+        .subscribe(createSearchResultsObserver(this.searchResults, this.isLoading));
+      onCleanup(() => subscription.unsubscribe());
+    }, {allowSignalWrites: true});
   }
 
   updateQueryUrlParamWith(newSearchQuery: string) {
@@ -56,4 +55,16 @@ export class BookOverviewDialogComponent {
 
 function getSearchQueryFromUrlParameters(params: Params): string {
   return params[queryUrlParameterName] ?? ''
+}
+
+function createSearchResultsObserver(searchResults: WritableSignal<Book[]>, isLoading: WritableSignal<boolean>): Partial<Observer<Book[]>> {
+  return {
+    next(currentSearchResults: Book[]) {
+      searchResults.set(currentSearchResults);
+      isLoading.set(false);
+    },
+    error() {
+      isLoading.set(false);
+    }
+  }
 }

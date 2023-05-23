@@ -12,7 +12,7 @@ import {Book} from '../../model';
 })
 export class BookListComponent {
   @Input()
-  books: Book[] | null = [];
+  books: Book[] = [];
 
   @Output()
   bookClick = new EventEmitter<Book>();

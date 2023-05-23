@@ -12,7 +12,7 @@ import {FormsModule} from '@angular/forms';
 })
 export class BookSearchComponent {
   @Input()
-  query: string | undefined | null;
+  query = '';
 
   @Output()
   readonly queryChange = new EventEmitter<string>();
